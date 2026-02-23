@@ -1,0 +1,50 @@
+﻿@import "tailwindcss";
+
+@theme {
+  --color-primary: #3b82f6;
+  --color-secondary: #6366f1;
+  --color-accent: #a855f7;
+  --color-background: #0f172a;
+  --color-foreground: #f8fafc;
+
+  --animate-float: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+body {
+  @apply bg-slate-950 text-slate-50 font-sans;
+  margin: 0;
+  min-height: 100vh;
+}
+::selection {
+  background-color: rgb(59 130 246 / 0.3);
+}
+
+.glass {
+  @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl;
+}
+
+.glass-dark {
+  @apply bg-slate-900/50 backdrop-blur-lg border border-slate-800/50 shadow-2xl;
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
