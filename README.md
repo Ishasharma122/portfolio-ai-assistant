@@ -97,5 +97,5 @@ Open:
 - What are Isha's core skills?
 - Tell me about the ThinkMate project.
 - Has she worked with Node.js?
-- What is her educational background?
+- what is Isha's cgpa?
 - How many DSA problems has she solved?
