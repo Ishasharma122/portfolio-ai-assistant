@@ -3,62 +3,57 @@
 A full-stack portfolio with a resume-grounded AI chat assistant.
 
 ## Overview
-This project combines a modern React portfolio UI with a Python FastAPI backend that uses Retrieval-Augmented Generation (RAG) over `backend/resume.md`.
-
-Users can ask questions about Isha Sharma's resume and receive grounded responses.
+This project combines a React + TypeScript frontend with a Python FastAPI backend.
+The chatbot answers resume questions using lightweight retrieval over `portfolio-ai/backend/resume.md` and generates responses through OpenRouter.
 
 ## Assignment Requirement Mapping
-- Frontend: React + TypeScript (implemented in `frontend/`)
-- Backend: Python + FastAPI (implemented in `backend/`)
-- Database / Vector Store: FAISS vector store
-- Chat Engine: OpenRouter using a free model (`stepfun/step-3.5-flash:free`)
+- Frontend: React + TypeScript (`portfolio-ai/frontend`)
+- Backend: Python + FastAPI (`portfolio-ai/backend`)
+- Retrieval Layer: In-memory chunk index (lightweight RAG-style retrieval)
+- Chat Engine: OpenRouter with a free model (`stepfun/step-3.5-flash:free`)
 
 ## Features
-- Portfolio sections: Hero, About, Skills, Projects, Experience, Education, Contact
-- Floating AI chat widget integrated with backend API
-- RAG pipeline: load resume -> chunk -> embed -> retrieve -> answer
-- Resume-grounded answering with fallback when information is missing
-- Responsive UI for desktop and mobile
+- Modern portfolio UI sections: About, Skills, Projects, Experience, Education, Contact
+- Floating AI chat widget
+- Resume-grounded responses with refusal for missing context
+- Responsive design for desktop and mobile
 
 ## Tech Stack
 - Frontend: React, TypeScript, Vite, Tailwind CSS, Framer Motion, Axios
-- Backend: FastAPI, LangChain, FAISS, HuggingFace Embeddings
-- LLM Provider: OpenRouter free model
+- Backend: FastAPI, Requests, Python-dotenv
+- LLM Provider: OpenRouter (free model)
 
 ## Project Structure
 ```text
-portfolio-ai/
-|-- frontend/
-|   |-- src/
-|   |   |-- components/
-|   |   |-- services/
-|   |   `-- App.tsx
-|   |-- .env.example
-|   `-- package.json
-|-- backend/
-|   |-- main.py
-|   |-- rag.py
-|   |-- resume.md
-|   |-- requirements.txt
-|   `-- .env.example
-`-- README.md
+repo-root/
+|-- README.md
+`-- portfolio-ai/
+    |-- frontend/
+    |   |-- src/
+    |   |-- .env.example
+    |   `-- package.json
+    `-- backend/
+        |-- main.py
+        |-- rag.py
+        |-- resume.md
+        |-- requirements.txt
+        `-- .env.example
 ```
 
 ## Local Setup
 
-### 1) Backend setup
+### 1) Backend
 ```bash
-cd backend
+cd portfolio-ai/backend
 python -m venv venv
 # Windows
 venv\Scripts\activate
 # macOS/Linux
 # source venv/bin/activate
-
 pip install -r requirements.txt
 ```
 
-Create `backend/.env` from `backend/.env.example`:
+Create `portfolio-ai/backend/.env` from `.env.example`:
 ```env
 OPENROUTER_API_KEY=your_openrouter_key
 OPENROUTER_MODEL=stepfun/step-3.5-flash:free
@@ -75,16 +70,16 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Health check:
-- `GET http://127.0.0.1:8000/health`
+- `http://127.0.0.1:8000/health`
 - Expected: `{"status":"ok","rag_ready":true}`
 
-### 2) Frontend setup
+### 2) Frontend
 ```bash
-cd ../frontend
+cd portfolio-ai/frontend
 npm install
 ```
 
-Create `frontend/.env` from `frontend/.env.example`:
+Create `portfolio-ai/frontend/.env` from `.env.example`:
 ```env
 VITE_API_URL=http://localhost:8000
 VITE_WEB3FORMS_KEY=your_web3forms_access_key
@@ -95,9 +90,38 @@ Run frontend:
 npm run dev
 ```
 
+Open:
+- `http://localhost:5173`
+
 ## Demo Questions
 - What are Isha's core skills?
 - Tell me about the ThinkMate project.
 - Has she worked with Node.js?
 - What is her educational background?
 - How many DSA problems has she solved?
+
+## Deployment (Render + Vercel)
+
+### Backend (Render)
+- Root Directory: `portfolio-ai/backend`
+- Build Command: `pip install -r requirements.txt`
+- Start Command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+- Add env vars from `backend/.env.example`
+- Set `PYTHON_VERSION=3.11.11`
+
+### Frontend (Vercel)
+- Root Directory: `portfolio-ai/frontend`
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Env vars:
+  - `VITE_API_URL=https://<your-render-backend-url>`
+  - `VITE_WEB3FORMS_KEY=<your_key>`
+
+After frontend deploy, update backend env:
+- `OPENROUTER_REFERER=https://<your-vercel-url>`
+- `ALLOWED_ORIGINS=https://<your-vercel-url>`
+
+## Security Notes
+- Never commit real `.env` files.
+- Keep secrets only in deployment env settings/local `.env`.
+- Rotate keys if exposed.
